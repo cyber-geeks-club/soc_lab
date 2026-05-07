@@ -6,7 +6,7 @@ A role-based task management and performance tracking system designed for struct
 
 ## 📌 Overview
 
-The **SOC Lab Management System** is a PHP + MySQL web application built to simulate structured task delegation and performance monitoring across multiple departments.
+The SOC Lab Management System is a PHP + MySQL web application built to simulate structured task delegation and performance monitoring across multiple departments.
 
 The system implements:
 
