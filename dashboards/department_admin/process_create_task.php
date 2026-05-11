@@ -2,6 +2,7 @@
 require_once '../../auth/auth.php';
 require_once '../../auth/authorize.php';
 require_once '../../config/db.php';
+require_once '../../includes/logger.php';
 
 authorizeRole(['department_admin']);
 
@@ -12,7 +13,7 @@ $title = trim($_POST['title']);
 $description = trim($_POST['description']);
 $assigned_users = $_POST['assigned_users'] ?? [];
 
-if (empty($title) || empty($description) || empty($assigned_users)) {
+if (empty($title) || empty($assigned_users)) {
     die("All fields required.");
 }
 
@@ -60,17 +61,14 @@ try {
     /*
     Log activity
     */
-    $log = $pdo->prepare("
-        INSERT INTO activity_log
-        (user_id, action_type, action_description, department_id)
-        VALUES (?, ?, ?, ?)
-    ");
-    $log->execute([
-        $admin_id,
-        'create_task',
-        "Created task '$title' assigned to multiple users",
-        $department_id
-    ]);
+    foreach ($assigned_users as $user_id) {
+    logActivity(
+        $pdo,
+        'ASSIGN_TASK',
+        "Task #$task_id assigned to user #$user_id",
+        $admin_id
+    );
+}
 
     $pdo->commit();
 

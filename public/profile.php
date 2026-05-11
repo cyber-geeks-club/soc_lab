@@ -119,16 +119,19 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/soc_lab/config/db.php";
             
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" value="<?= htmlspecialchars($user['username']) ?>" required>
+                <input type="text" id="username" name="username" placeholder="New Username" required>
             </div>
-
+<div class="form-group">
+    <label for="confirm_username">Confirm Username</label>
+    <input type="text" id="confirm_username" name="confirm_username" placeholder="Confirm username" required>
+</div>
             <!-- Password Section -->
             <div class="section-title">Change Password</div>
             <p class="section-subtitle">Leave blank if you don't want to change your password.</p>
 
             <div class="form-group">
                 <label for="current_password">Current Password</label>
-                <input type="password" id="current_password" name="current_password" placeholder="Enter current password">
+                <input type="password" id="current_password" name="current_password" placeholder="Enter current password" required>
             </div>
 
             <div class="form-group">

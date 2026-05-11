@@ -2,6 +2,7 @@
 require_once '../../auth/auth.php';
 require_once '../../auth/authorize.php';
 require_once '../../config/db.php';
+require_once '../../includes/logger.php';
 
 authorizeRole(['department_admin']);
 
@@ -185,7 +186,6 @@ $errorMessages = [
                 <textarea 
                     name="description"
                     placeholder="Describe the task, expectations, or instructions..."
-                    required
                 ></textarea>
             </div>
 
