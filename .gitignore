@@ -1,2 +1,7 @@
-/uploads/task_reports/  
-/config/db.php 
+.DS_Store
+
+uploads/task_reports/*
+
+!uploads/task_reports/.gitkeep
+
+.env
