@@ -5,19 +5,16 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/soc_lab/auth/authorize.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/soc_lab/config/db.php";
 require_once $_SERVER['DOCUMENT_ROOT'] . "/soc_lab/includes/logger.php";
 
-/*
-|--------------------------------------------------------------------------
-| Allow Super Admin OR Department Admin
-|--------------------------------------------------------------------------
-*/
 if (!isset($_SESSION['role_name'])) {
-    die("Unauthorized.");
+    header("Location: manage_department_users.php?error=invalid_action");
+    exit;
 }
 
 $currentRole = $_SESSION['role_name'];
 
 if ($currentRole !== 'super_admin' && $currentRole !== 'department_admin') {
-    die("Access denied.");
+    header("Location: manage_department_users.php?error=invalid_action");
+    exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -26,19 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action  = $_POST['action'] ?? null;
 
     if (!$user_id || !$action) {
-        die("Invalid request.");
+        header("Location: manage_department_users.php?error=invalid_action");
+        exit;
     }
 
     // Prevent self-disable
     if ($user_id == $_SESSION['user_id']) {
-        die("You cannot disable yourself.");
+        header("Location: manage_department_users.php?error=cannot_disable_self");
+        exit;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Fetch Target User WITH Role + Department
-    |--------------------------------------------------------------------------
-    */
     $stmt = $pdo->prepare("
         SELECT 
             u.username,
@@ -53,70 +47,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch();
 
     if (!$user) {
-        die("User not found.");
+        header("Location: manage_department_users.php?error=invalid_action");
+        exit;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Department Admin Restrictions
-    |--------------------------------------------------------------------------
-    */
+    // Department admin restrictions
     if ($currentRole === 'department_admin') {
 
-        // Must be same department
         if ($user['department_id'] != $_SESSION['department_id']) {
-            die("You cannot manage users outside your department.");
+            header("Location: manage_department_users.php?error=invalid_action");
+            exit;
         }
 
-        // Can only manage members
         if ($user['role_name'] !== 'member') {
-            die("You can only manage members.");
+            header("Location: manage_department_users.php?error=invalid_action");
+            exit;
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Determine New Status
-    |--------------------------------------------------------------------------
-    */
+    // Determine status
     if ($action === "disable") {
         $newStatus = "disabled";
         $logAction = "disable_user";
+        $success = "user_disabled";
     } elseif ($action === "enable") {
         $newStatus = "active";
         $logAction = "enable_user";
+        $success = "user_enabled";
     } else {
-        die("Invalid action.");
+        header("Location: manage_department_users.php?error=invalid_action");
+        exit;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Update User
-    |--------------------------------------------------------------------------
-    */
+    // Update user
     $update = $pdo->prepare("UPDATE user SET status = ? WHERE user_id = ?");
     $update->execute([$newStatus, $user_id]);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Log Activity
-    |--------------------------------------------------------------------------
-    */
     logActivity(
         $pdo,
         $logAction,
         ucfirst($newStatus) . " account: " . $user['username']
     );
 
-    /*
-    |--------------------------------------------------------------------------
-    | Redirect Based On Role
-    |--------------------------------------------------------------------------
-    */
+    // Redirect based on role
     if ($currentRole === 'super_admin') {
-        header("Location: manage_users.php");
+        header("Location: manage_users.php?success=$success");
     } else {
-        header("Location: manage_department_users.php");
+        header("Location: manage_department_users.php?success=$success");
     }
 
     exit;

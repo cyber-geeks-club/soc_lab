@@ -33,8 +33,65 @@ if (!$user) {
     logActivity($pdo, "login_failed", "Failed login attempt for username: $username", null);
 
     $_SESSION["error"] = "Invalid username or password";
-    header("Location: ../public/login.php");
-    exit;
+    echo "
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Upload Success</title>
+
+    <style>
+        body {
+        margin:0;
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        background-color: #0b0f14;
+        margin: 0;
+        font-family: Arial, sans-serif;
+}
+
+        .alert{
+            background:#dcfce7;
+            color:#166534;
+            padding:20px 30px;
+            border-radius:12px;
+            font-size:18px;
+            font-weight:600;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            animation:fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn{
+            from{
+                opacity:0;
+                transform:translateY(-10px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+    </style>
+
+    <script>
+        setTimeout(() => {
+            window.location.href = '/soc_lab/public/login.php';
+        }, 3000);
+    </script>
+</head>
+
+<body>
+
+    <div class='alert'>
+        ❌ Invalid Username or Password!
+    </div>
+
+</body>
+</html>
+";
+exit;
 }
 
 /* -------------------------
@@ -90,6 +147,63 @@ if (password_verify($password, $user['password_hash'])) {
     );
 
     $_SESSION["error"] = "Invalid username or password";
-    header("Location: ../public/login.php");
-    exit;
+    echo "
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Upload Success</title>
+
+    <style>
+        body {
+        margin:0;
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        background-color: #0b0f14;
+        margin: 0;
+        font-family: Arial, sans-serif;
+}
+
+        .alert{
+            background:#dcfce7;
+            color:#166534;
+            padding:20px 30px;
+            border-radius:12px;
+            font-size:18px;
+            font-weight:600;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            animation:fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn{
+            from{
+                opacity:0;
+                transform:translateY(-10px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+    </style>
+
+    <script>
+        setTimeout(() => {
+            window.location.href = '/soc_lab/public/login.php';
+        }, 3000);
+    </script>
+</head>
+
+<body>
+
+    <div class='alert'>
+        ❌ Invalid Username or Password!
+    </div>
+
+</body>
+</html>
+";
+exit;
 }

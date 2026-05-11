@@ -85,11 +85,6 @@ $activeUsers = $pdo->query("SELECT COUNT(*) FROM user WHERE status = 'active'")-
     <p>View tasks across all departments</p>
 </a>
 
-    <a href="create_user.php" class="card action-card">
-        <h3>Create User</h3>
-        <p>Create and control user accounts</p>
-    </a>
-
     <a href="activity_logs.php" class="card action-card">
         <h3>Activity Logs</h3>
         <p>Monitor all system activities</p>

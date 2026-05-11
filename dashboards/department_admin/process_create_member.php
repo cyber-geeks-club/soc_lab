@@ -9,9 +9,25 @@ authorizeDepartmentAdmin();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $username = trim($_POST['username']);
+    $passwordRaw = $_POST['password'];
     $department_id = $_SESSION['department_id'];
+
+    if (empty($username) || empty($passwordRaw)) {
+        header("Location: manage_department_users.php?error=invalid_action");
+        exit;
+    }
+
+    // Check if username already exists
+    $check = $pdo->prepare("SELECT user_id FROM user WHERE username = ?");
+    $check->execute([$username]);
+
+    if ($check->fetch()) {
+        header("Location: manage_department_users.php?error=user_exists");
+        exit;
+    }
+
+    $password = password_hash($passwordRaw, PASSWORD_DEFAULT);
 
     // Get MEMBER role ID
     $stmt = $pdo->prepare("SELECT role_id FROM role WHERE role_name = 'member'");
@@ -19,7 +35,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = $stmt->fetch();
 
     if (!$role) {
-        die("Member role not found.");
+        header("Location: manage_department_users.php?error=invalid_action");
+        exit;
     }
 
     $role_id = $role['role_id'];
@@ -43,6 +60,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         "Department admin created member: $username"
     );
 
-    header("Location: dashboard.php?success=member_created");
+    header("Location: manage_department_users.php?success=member_created");
     exit;
 }

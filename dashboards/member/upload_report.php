@@ -26,7 +26,9 @@ if (!$assignment) {
 
 $file = $_FILES['report'];
 
-if ($file['error'] !== 0) die("Upload error.");
+if ($file['error'] !== 0) {
+    die("Upload error code: " . $file['error']);
+}
 if ($file['size'] > 5 * 1024 * 1024) die("File too large.");
 
 $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
@@ -34,10 +36,10 @@ if ($ext !== 'pdf') die("Only PDF allowed.");
 
 $new_name = "task_{$task_id}_user_{$user_id}_" . time() . ".pdf";
 
-$uploadDir = __DIR__ . "/../../uploads/task_reports/";
+$uploadDir = realpath(__DIR__ . "/../../uploads") . "/task_reports/";
 
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
+    mkdir($uploadDir, 0755, true);
 }
 
 $path = $uploadDir . $new_name;
@@ -47,6 +49,23 @@ if (!is_uploaded_file($file['tmp_name'])) {
 }
 
 if (!move_uploaded_file($file['tmp_name'], $path)) {
+
+    echo "<pre>";
+
+    echo "TMP NAME: " . $file['tmp_name'] . "\n";
+    echo "DESTINATION: " . $path . "\n";
+
+    echo "UPLOAD DIR EXISTS: ";
+    var_dump(is_dir($uploadDir));
+
+    echo "UPLOAD DIR WRITABLE: ";
+    var_dump(is_writable($uploadDir));
+
+    echo "TMP FILE EXISTS: ";
+    var_dump(file_exists($file['tmp_name']));
+
+    print_r(error_get_last());
+
     die("Upload failed.");
 }
 
@@ -77,5 +96,62 @@ $log->execute([
     "Uploaded report for task ID $task_id"
 ]);
 
-header("Location: tasks.php");
+echo "
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Upload Success</title>
+
+    <style>
+        body {
+        margin:0;
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        background-color: #0b0f14;
+        margin: 0;
+        font-family: Arial, sans-serif;
+}
+
+        .alert{
+            background:#dcfce7;
+            color:#166534;
+            padding:20px 30px;
+            border-radius:12px;
+            font-size:18px;
+            font-weight:600;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            animation:fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn{
+            from{
+                opacity:0;
+                transform:translateY(-10px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+    </style>
+
+    <script>
+        setTimeout(() => {
+            window.location.href = 'tasks.php';
+        }, 3000);
+    </script>
+</head>
+
+<body>
+
+    <div class='alert'>
+        ✅ Report uploaded successfully!
+    </div>
+
+</body>
+</html>
+";
 exit;

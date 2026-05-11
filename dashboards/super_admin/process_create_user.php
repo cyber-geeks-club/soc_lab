@@ -28,6 +28,6 @@ logActivity(
     "create_user",
     "Created user ID: $new_user_id, Username: $username, Role: $role_id, Dept: $department_id");
 
-    header("Location: dashboard.php?success=user_created");
-    exit;
+    header("Location: manage_users.php?success=user_created");
+        exit;
 }

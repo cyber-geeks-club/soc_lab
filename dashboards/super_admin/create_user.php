@@ -12,15 +12,15 @@ $roles = $pdo->query("SELECT role_id, role_name FROM role")->fetchAll();
 // Fetch departments
 $departments = $pdo->query("SELECT department_id, department_name FROM department")->fetchAll();
 ?>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User</title>
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    </head>
 <?php include "../../includes/header.php"; ?>
  <?php include "../../includes/navbar.php"; ?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create User</title>
-</head>
-<body>
+<div class="main-content">
 
 <h2>Create New User</h2>
 

@@ -74,8 +74,15 @@ try {
 
     $pdo->commit();
 
-    header("Location: tasks.php");
+    header("Location: create_task.php?success=task_created");
+        exit;
+    
+if (empty($_POST['assigned_users'])) {
+    header("Location: create_task.php?error=no_users_selected");
     exit;
+}
+else {header("Location: create_task.php?error=invalid_request");
+exit;}
 
 } catch (Exception $e) {
 
